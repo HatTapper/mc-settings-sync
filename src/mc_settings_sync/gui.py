@@ -102,9 +102,11 @@ class App(ttk.Frame):
     def apply(self) -> None:
         instance = self.instance_var.get()
         template = self.template_var.get()
+        
         if not instance or not template:
             self.set_status("Pick both an instance and a template first.", error=True)
             return
+        
         try:
             result = apply_template(
                 self.settings.instances_root,
@@ -116,7 +118,7 @@ class App(ttk.Frame):
             self.set_status(str(exc), error=True)
             return
         if result.count == 0:
-            self.set_status(f"Template '{template}' is empty — nothing copied.", error=True)
+            self.set_status(f"Template '{template}' is empty, nothing copied.", error=True)
         else:
             self.set_status(
                 f"Copied {result.count} file(s) from '{template}' into '{instance}'."
@@ -130,7 +132,7 @@ def main() -> int:
     root = tk.Tk()
     root.title("MC Settings Sync")
     root.minsize(520, 300)
-    
+
     App(root)
 
     root.mainloop()

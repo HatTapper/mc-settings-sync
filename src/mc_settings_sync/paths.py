@@ -11,18 +11,18 @@ CONFIG_FILENAME = "mc-settings-sync.json"
 def default_instances_root() -> Path:
     appdata = os.environ.get("APPDATA")
     if appdata:
-        return Path(appdata) / "PrismLauncher" / "instances"
-    return Path.home() / ".local" / "share" / "PrismLauncher" / "instances"
+        return Path(appdata).joinpath("PrismLauncher", "instances")
+    return Path.home().joinpath(".local", "share", "PrismLauncher", "instances")
 
 
 def default_templates_root() -> Path:
-    return Path.home() / "Documents" / "MCTemplates"
+    return Path.home().joinpath("Documents", "MCTemplates")
 
 
 def config_path() -> Path:
     appdata = os.environ.get("APPDATA")
-    base = Path(appdata) if appdata else Path.home() / ".config"
-    return base / "mc-settings-sync" / CONFIG_FILENAME
+    base = Path(appdata) if appdata else Path.home().joinpath(".config")
+    return base.joinpath("mc-settings-sync", CONFIG_FILENAME)
 
 
 @dataclass
@@ -39,6 +39,7 @@ class Settings:
                 data = json.loads(path.read_text(encoding="utf-8"))
             except (OSError, ValueError):
                 data = {}
+
         return cls(
             instances_root=Path(data.get("instances_root") or default_instances_root()),
             templates_root=Path(data.get("templates_root") or default_templates_root()),
@@ -69,11 +70,10 @@ def list_instances(instances_root: Path) -> list[str]:
             names.append(entry.name)
     return names
 
-
+# tries to fetch the 
 def minecraft_dir(instance_dir: Path) -> Path | None:
-    """Prism uses `minecraft`; some older/imported instances use `.minecraft`."""
     for candidate in ("minecraft", ".minecraft"):
-        path = instance_dir / candidate
+        path = instance_dir.joinpath(candidate)
         if path.is_dir():
             return path
     return None
@@ -82,6 +82,7 @@ def minecraft_dir(instance_dir: Path) -> Path | None:
 def list_templates(templates_root: Path) -> list[str]:
     if not templates_root.is_dir():
         return []
+    
     return [
         entry.name
         for entry in sorted(templates_root.iterdir(), key=lambda p: p.name.lower())

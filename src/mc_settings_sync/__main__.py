@@ -12,6 +12,7 @@ from .sync import SyncError, apply_template
 
 
 def main(argv: list[str] | None = None) -> int:
+    # ensure the args get through somehow
     argv = sys.argv[1:] if argv is None else argv
     if not argv:
         from .gui import main as gui_main
