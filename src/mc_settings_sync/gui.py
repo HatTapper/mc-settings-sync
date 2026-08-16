@@ -114,10 +114,16 @@ class App(ttk.Frame):
 
         if not instances:
             self.set_status(f"No instances found in {self.settings.instances_root}", error=True)
+        elif not self.settings.templates_root.is_dir():
+            self.set_status(
+                f"No templates yet. Use 'Create templates folder' to set up "
+                f"{self.settings.templates_root}.",
+                error=True,
+            )
         elif not templates:
             self.set_status(
-                f"No templates yet. Create the folder below, then put your settings "
-                f"files in {self.settings.templates_root.joinpath('base')}.",
+                f"No templates yet. Create a new folder inside "
+                f"{self.settings.templates_root} and put your settings files inside it.",
                 error=True,
             )
         else:
