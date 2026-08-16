@@ -1,6 +1,4 @@
-"""Copy a template tree into a Prism instance, overwriting only template files."""
-
-from __future__ import annotations
+﻿"""Copy a template tree into a Prism instance, overwriting only template files."""
 
 import shutil
 from dataclasses import dataclass, field

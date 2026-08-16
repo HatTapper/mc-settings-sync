@@ -1,6 +1,4 @@
-"""Filesystem discovery for Prism instances and settings templates."""
-
-from __future__ import annotations
+﻿"""Filesystem discovery for Prism instances and settings templates."""
 
 import json
 import os

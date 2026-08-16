@@ -1,10 +1,8 @@
-"""Entry point: `python -m mc_settings_sync` opens the GUI.
+﻿"""Entry point: `python -m mc_settings_sync` opens the GUI.
 
 With arguments it behaves like the original .bat script:
     python -m mc_settings_sync <InstanceName> [TemplateName]
 """
-
-from __future__ import annotations
 
 import argparse
 import sys

@@ -1,8 +1,4 @@
-"""Tkinter front end for applying settings templates to Prism instances."""
-
-from __future__ import annotations
-
-import tkinter as tk
+﻿import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, ttk
 
@@ -10,7 +6,6 @@ from .paths import Settings, list_instances, list_templates
 from .sync import SyncError, apply_template
 
 PAD = 8
-
 
 class App(ttk.Frame):
     def __init__(self, master: tk.Tk) -> None:
@@ -52,10 +47,10 @@ class App(ttk.Frame):
         self.templates_label = ttk.Label(paths, text="", wraplength=380)
         ttk.Label(paths, text="Instances").grid(row=0, column=0, sticky="w")
         self.instances_label.grid(row=0, column=1, sticky="w", padx=PAD)
-        ttk.Button(paths, text="Change…", command=self.pick_instances_root).grid(row=0, column=2)
+        ttk.Button(paths, text="Changeâ€¦", command=self.pick_instances_root).grid(row=0, column=2)
         ttk.Label(paths, text="Templates").grid(row=1, column=0, sticky="w", pady=(4, 0))
         self.templates_label.grid(row=1, column=1, sticky="w", padx=PAD, pady=(4, 0))
-        ttk.Button(paths, text="Change…", command=self.pick_templates_root).grid(
+        ttk.Button(paths, text="Changeâ€¦", command=self.pick_templates_root).grid(
             row=1, column=2, pady=(4, 0)
         )
 
@@ -121,7 +116,7 @@ class App(ttk.Frame):
             self.set_status(str(exc), error=True)
             return
         if result.count == 0:
-            self.set_status(f"Template '{template}' is empty — nothing copied.", error=True)
+            self.set_status(f"Template '{template}' is empty â€” nothing copied.", error=True)
         else:
             self.set_status(
                 f"Copied {result.count} file(s) from '{template}' into '{instance}'."
