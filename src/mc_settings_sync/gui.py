@@ -1,15 +1,22 @@
 import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog, ttk
+from tkinter import filedialog, messagebox, ttk
+from tkinter.messagebox import QUESTION as ICON_QUESTION, WARNING as ICON_WARNING
 
 from .paths import Settings, list_instances, list_templates
-from .sync import SyncError, apply_template
+from .sync import SyncError, SyncResult, apply_template
 
+# ui padding
 PAD = 8
+
+# folders where an overwrite costs real progress rather than just a setting
+RISKY_DIRS = {"saves", "mods", "resourcepacks", "shaderpacks", "screenshots"}
+
 
 class App(ttk.Frame):
     def __init__(self, master: tk.Tk) -> None:
         super().__init__(master, padding=PAD)
+
         self.settings = Settings.load()
         self.grid(sticky="nsew")
         master.columnconfigure(0, weight=1)
@@ -25,6 +32,7 @@ class App(ttk.Frame):
 
     def _build(self) -> None:
         row = 0
+
         ttk.Label(self, text="Instance").grid(row=row, column=0, sticky="w", pady=(0, PAD))
         self.instance_box = ttk.Combobox(
             self, textvariable=self.instance_var, state="readonly"
@@ -45,10 +53,13 @@ class App(ttk.Frame):
 
         self.instances_label = ttk.Label(paths, text="", wraplength=380)
         self.templates_label = ttk.Label(paths, text="", wraplength=380)
+
         ttk.Label(paths, text="Instances").grid(row=0, column=0, sticky="w")
+
         self.instances_label.grid(row=0, column=1, sticky="w", padx=PAD)
         ttk.Button(paths, text="Change…", command=self.pick_instances_root).grid(row=0, column=2)
         ttk.Label(paths, text="Templates").grid(row=1, column=0, sticky="w", pady=(4, 0))
+
         self.templates_label.grid(row=1, column=1, sticky="w", padx=PAD, pady=(4, 0))
         ttk.Button(paths, text="Change…", command=self.pick_templates_root).grid(
             row=1, column=2, pady=(4, 0)
@@ -68,8 +79,10 @@ class App(ttk.Frame):
     def refresh(self) -> None:
         instances = list_instances(self.settings.instances_root)
         templates = list_templates(self.settings.templates_root)
+
         self._fill(self.instance_box, self.instance_var, instances)
         self._fill(self.template_box, self.template_var, templates)
+
         self.instances_label.config(text=str(self.settings.instances_root))
         self.templates_label.config(text=str(self.settings.templates_root))
 
@@ -102,11 +115,32 @@ class App(ttk.Frame):
     def apply(self) -> None:
         instance = self.instance_var.get()
         template = self.template_var.get()
-        
+
         if not instance or not template:
             self.set_status("Pick both an instance and a template first.", error=True)
             return
-        
+
+        # dry run first so the confirmation can say exactly what is about to happen
+        try:
+            preview = apply_template(
+                self.settings.instances_root,
+                instance,
+                self.settings.templates_root,
+                template,
+                dry_run=True,
+            )
+        except (SyncError, OSError) as exc:
+            self.set_status(str(exc), error=True)
+            return
+
+        if preview.count == 0:
+            self.set_status(f"Template '{template}' is empty, nothing copied.", error=True)
+            return
+
+        if not self._confirm(instance, template, preview):
+            self.set_status("Cancelled, nothing was copied.")
+            return
+
         try:
             result = apply_template(
                 self.settings.instances_root,
@@ -117,12 +151,53 @@ class App(ttk.Frame):
         except (SyncError, OSError) as exc:
             self.set_status(str(exc), error=True)
             return
+
         if result.count == 0:
             self.set_status(f"Template '{template}' is empty, nothing copied.", error=True)
         else:
             self.set_status(
                 f"Copied {result.count} file(s) from '{template}' into '{instance}'."
             )
+
+    # spells out what is about to be overwritten, and flags the folders worth worrying about
+    def _confirm(self, instance: str, template: str, preview: SyncResult) -> bool:
+        existing = [name for name in preview.copied if preview.destination.joinpath(name).exists()]
+        risky = sorted({name.split("/")[0] for name in preview.copied} & RISKY_DIRS)
+
+        lines = [
+            f"Apply template '{template}' to instance '{instance}'?",
+            "",
+            f"{preview.count} file(s) will be written to:",
+            str(preview.destination),
+            "",
+            f"{len(existing)} existing file(s) will be overwritten."
+            if existing
+            else "No existing files will be overwritten.",
+        ]
+
+        if risky:
+            lines += [
+                "",
+                f"WARNING: this template writes into {', '.join(risky)}.",
+                "That can replace worlds or mods in this instance.",
+            ]
+
+        lines += ["", "This cannot be undone.", "", self._file_list(preview.copied)]
+
+        return messagebox.askokcancel(
+            "Confirm apply",
+            "\n".join(lines),
+            icon=ICON_WARNING if risky else ICON_QUESTION,
+        )
+
+    @staticmethod
+    def _file_list(names: list[str], limit: int = 15) -> str:
+        shown = "\n".join(names[:limit])
+
+        if len(names) > limit:
+            shown += f"\n... and {len(names) - limit} more"
+
+        return shown
 
     def set_status(self, message: str, error: bool = False) -> None:
         self.status_var.set(("Error: " if error else "") + message)

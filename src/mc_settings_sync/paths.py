@@ -59,23 +59,25 @@ class Settings:
             encoding="utf-8",
         )
 
-
+# gets all mc instance paths present in a folder, using minecraft_dir() to verify
 def list_instances(instances_root: Path) -> list[str]:
-    """Instance folder names that actually contain a Minecraft game directory."""
     if not instances_root.is_dir():
         return []
+    
     names = []
     for entry in sorted(instances_root.iterdir(), key=lambda p: p.name.lower()):
         if entry.is_dir() and minecraft_dir(entry) is not None:
             names.append(entry.name)
+
     return names
 
-# tries to fetch the 
+# tries to fetch a potential mc instance given a path
 def minecraft_dir(instance_dir: Path) -> Path | None:
     for candidate in ("minecraft", ".minecraft"):
         path = instance_dir.joinpath(candidate)
         if path.is_dir():
             return path
+        
     return None
 
 
