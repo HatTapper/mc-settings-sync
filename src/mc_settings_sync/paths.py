@@ -1,4 +1,4 @@
-﻿"""Filesystem discovery for Prism instances and settings templates."""
+"""Filesystem discovery for Prism instances and settings templates."""
 
 import json
 import os
