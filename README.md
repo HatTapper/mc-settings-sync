@@ -2,7 +2,7 @@
 
 Copies pre-configured Minecraft settings — `options.txt`, `servers.dat`,
 `config/sodium-options.json`, `config/iris.properties`, and anything else you
-drop in a template folder — into a Prism Launcher instance, so a fresh (or
+drop in a template folder — into a launcher instance, so a fresh (or
 modded) instance doesn't have to be reconfigured by hand.
 
 Only files that exist in the template are written into the target instance.
