@@ -88,10 +88,10 @@ if you are unsure.
 ## Roadmap
 
 Planned features are:
-- Create Template From Instance: Allow users to create a template folder from an existing launcher instance by picking
+- [Create Template From Instance](https://github.com/HatTapper/mc-settings-sync/issues/1): Allow users to create a template folder from an existing launcher instance by picking
   the files they would like to be carried over to the template
-- Version Mismatch Warning: Utilize files like Prism's `mmc-pack.json` to detect version mismatches and warn the user before applying
-- Wider Launcher Support: Extend functionality to support more launchers besides just Prism Launcher
+- [Version Mismatch Warning](https://github.com/HatTapper/mc-settings-sync/issues/2): Utilize files like Prism's `mmc-pack.json` to detect version mismatches and warn the user before applying
+- [Wider Launcher Support](https://github.com/HatTapper/mc-settings-sync/issues/3): Extend functionality to support more launchers besides just Prism Launcher
 
 ## Development
 
