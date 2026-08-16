@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mc-settings-sync"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Apply pre-configured Minecraft settings templates to Prism Launcher instances"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -19,6 +19,10 @@ dev = ["pytest>=8", "pyinstaller>=6"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+# single source of truth, __init__.py owns the version
+[tool.setuptools.dynamic]
+version = { attr = "mc_settings_sync.__version__" }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
