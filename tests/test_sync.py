@@ -1,6 +1,6 @@
 import pytest
 
-from mc_settings_sync.paths import list_instances, list_templates
+from mc_settings_sync.paths import create_starter_template, list_instances, list_templates
 from mc_settings_sync.sync import SyncError, apply_template
 
 
@@ -95,3 +95,26 @@ def test_listing_skips_non_instances(tmp_path):
 def test_listing_missing_roots_is_empty(tmp_path):
     assert list_instances(tmp_path / "nope") == []
     assert list_templates(tmp_path / "nope") == []
+
+
+def test_create_starter_template_builds_missing_tree(tmp_path):
+    root = tmp_path / "Documents" / "MCTemplates"
+
+    starter = create_starter_template(root)
+
+    assert starter == root / "base"
+    assert starter.is_dir()
+    assert (root / "README.txt").is_file()
+    assert list_templates(root) == ["base"]
+
+
+def test_create_starter_template_is_repeatable(tmp_path):
+    root = tmp_path / "MCTemplates"
+    create_starter_template(root)
+    (root / "base" / "options.txt").write_text("mine", encoding="utf-8")
+    (root / "README.txt").write_text("my own notes", encoding="utf-8")
+
+    create_starter_template(root)
+
+    assert (root / "base" / "options.txt").read_text(encoding="utf-8") == "mine"
+    assert (root / "README.txt").read_text(encoding="utf-8") == "my own notes"

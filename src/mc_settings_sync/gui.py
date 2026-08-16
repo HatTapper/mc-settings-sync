@@ -1,9 +1,12 @@
+import os
+import subprocess
+import sys
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 from tkinter.messagebox import QUESTION as ICON_QUESTION, WARNING as ICON_WARNING
 
-from .paths import Settings, list_instances, list_templates
+from .paths import Settings, create_starter_template, list_instances, list_templates
 from .sync import SyncError, SyncResult, apply_template
 
 # ui padding
@@ -11,6 +14,19 @@ PAD = 8
 
 # folders where an overwrite costs real progress rather than just a setting
 RISKY_DIRS = {"saves", "mods", "resourcepacks", "shaderpacks", "screenshots"}
+
+
+# shows a folder in the file manager, never fatal since it is only a convenience
+def open_folder(path: Path) -> None:
+    try:
+        if sys.platform == "win32":
+            os.startfile(path)
+        elif sys.platform == "darwin":
+            subprocess.run(["open", str(path)], check=False)
+        else:
+            subprocess.run(["xdg-open", str(path)], check=False)
+    except OSError:
+        pass
 
 
 class App(ttk.Frame):
@@ -71,6 +87,11 @@ class App(ttk.Frame):
         ttk.Button(buttons, text="Refresh", command=self.refresh).pack(side="left")
         ttk.Button(buttons, text="Apply settings", command=self.apply).pack(side="right")
 
+        # only packed when there is nothing to apply yet, see refresh()
+        self.create_button = ttk.Button(
+            buttons, text="Create templates folder", command=self.create_templates_folder
+        )
+
         row += 1
         ttk.Label(self, textvariable=self.status_var, wraplength=460).grid(
             row=row, column=0, columnspan=2, sticky="w"
@@ -86,10 +107,19 @@ class App(ttk.Frame):
         self.instances_label.config(text=str(self.settings.instances_root))
         self.templates_label.config(text=str(self.settings.templates_root))
 
+        if templates:
+            self.create_button.pack_forget()
+        else:
+            self.create_button.pack(side="left", padx=(PAD, 0))
+
         if not instances:
             self.set_status(f"No instances found in {self.settings.instances_root}", error=True)
         elif not templates:
-            self.set_status(f"No templates found in {self.settings.templates_root}", error=True)
+            self.set_status(
+                f"No templates yet. Create the folder below, then put your settings "
+                f"files in {self.settings.templates_root.joinpath('base')}.",
+                error=True,
+            )
         else:
             self.set_status(f"{len(instances)} instance(s), {len(templates)} template(s).")
 
@@ -98,6 +128,19 @@ class App(ttk.Frame):
         box["values"] = values
         if var.get() not in values:
             var.set(values[0] if values else "")
+
+    # builds the templates folder for a first time user and opens it so they can fill it in
+    def create_templates_folder(self) -> None:
+        try:
+            starter = create_starter_template(self.settings.templates_root)
+        except OSError as exc:
+            self.set_status(f"Could not create {self.settings.templates_root}: {exc}", error=True)
+            return
+
+        self.refresh()
+        self.set_status(f"Created {starter}. Put your settings files in it, then hit Refresh.")
+
+        open_folder(starter)
 
     def pick_instances_root(self) -> None:
         self._pick("instances_root", "Select the Prism instances folder")
