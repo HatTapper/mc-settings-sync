@@ -97,6 +97,50 @@ def test_listing_missing_roots_is_empty(tmp_path):
     assert list_templates(tmp_path / "nope") == []
 
 
+@pytest.mark.parametrize("escape", ["../outside", "..", "sub/../../outside"])
+def test_template_name_cannot_escape_root(tmp_path, escape):
+    instances, templates = tmp_path / "instances", tmp_path / "templates"
+    make_instance(instances, "MyInstance")
+    make_template(templates, "base", {"options.txt": "x"})
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (outside / "secret.txt").write_text("private", encoding="utf-8")
+
+    with pytest.raises(SyncError, match="must stay inside"):
+        apply_template(instances, "MyInstance", templates, escape)
+
+
+def test_instance_name_cannot_escape_root(tmp_path):
+    instances, templates = tmp_path / "instances", tmp_path / "templates"
+    make_instance(instances, "MyInstance")
+    make_template(templates, "base", {"options.txt": "x"})
+    make_instance(tmp_path / "elsewhere", "Victim")
+
+    with pytest.raises(SyncError, match="must stay inside"):
+        apply_template(instances, "../elsewhere/Victim", templates, "base")
+
+
+def test_absolute_name_is_rejected(tmp_path):
+    instances, templates = tmp_path / "instances", tmp_path / "templates"
+    make_instance(instances, "MyInstance")
+    make_template(templates, "base", {"options.txt": "x"})
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+
+    with pytest.raises(SyncError, match="must stay inside"):
+        apply_template(instances, "MyInstance", templates, str(elsewhere))
+
+
+def test_normal_names_still_resolve(tmp_path):
+    instances, templates = tmp_path / "instances", tmp_path / "templates"
+    make_instance(instances, "Fabric 1.21")
+    make_template(templates, "fabric-sodium", {"options.txt": "x"})
+
+    result = apply_template(instances, "Fabric 1.21", templates, "fabric-sodium")
+
+    assert result.copied == ["options.txt"]
+
+
 def test_create_starter_template_builds_missing_tree(tmp_path):
     root = tmp_path / "Documents" / "MCTemplates"
 

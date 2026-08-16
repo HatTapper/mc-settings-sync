@@ -20,12 +20,23 @@ class SyncResult:
         return len(self.copied)
 
 
+# keeps a name from escaping its root with .. or an absolute path
+# returns the resolved folder so callers work with a clean path
+def resolve_inside(root: Path, name: str, label: str) -> Path:
+    resolved = root.joinpath(name).resolve()
+
+    if not resolved.is_relative_to(root.resolve()):
+        raise SyncError(f"{label} name must stay inside {root}, got '{name}'")
+
+    return resolved
+
+
 def resolve_destination(instances_root: Path, instance_name: str) -> Path:
-    instance_dir = instances_root.joinpath(instance_name)
-    
+    instance_dir = resolve_inside(instances_root, instance_name, "Instance")
+
     if not instance_dir.is_dir():
         raise SyncError(f"Instance not found: {instance_dir}")
-    
+
     game_dir = minecraft_dir(instance_dir)
     if game_dir is None:
         raise SyncError(
@@ -37,7 +48,7 @@ def resolve_destination(instances_root: Path, instance_name: str) -> Path:
 
 
 def resolve_template(templates_root: Path, template_name: str) -> Path:
-    template_dir = templates_root.joinpath(template_name)
+    template_dir = resolve_inside(templates_root, template_name, "Template")
 
     if not template_dir.is_dir():
         raise SyncError(f"Template not found: {template_dir}")
