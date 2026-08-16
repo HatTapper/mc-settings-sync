@@ -30,6 +30,8 @@ jobs:
         run: >
           pyinstaller --noconfirm --onefile --windowed
           --name mc-settings-sync
+          --icon assets/icon.ico
+          --add-data "assets/icon.ico;assets"
           --paths src
           launcher.py
 

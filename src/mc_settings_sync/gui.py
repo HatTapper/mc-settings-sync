@@ -16,6 +16,15 @@ PAD = 8
 RISKY_DIRS = {"saves", "mods", "resourcepacks", "shaderpacks", "screenshots"}
 
 
+# finds a bundled file, pyinstaller unpacks onefile builds into a temp dir
+def resource_path(relative: str) -> Path:
+    bundle = getattr(sys, "_MEIPASS", None)
+    if bundle is not None:
+        return Path(bundle).joinpath(relative)
+
+    return Path(__file__).resolve().parents[2].joinpath(relative)
+
+
 # shows a folder in the file manager, never fatal since it is only a convenience
 def open_folder(path: Path) -> None:
     try:
@@ -256,6 +265,14 @@ def main() -> int:
     root = tk.Tk()
     root.title("MC Settings Sync")
     root.minsize(520, 300)
+
+    # title bar icon, skipped rather than fatal if the file is missing
+    icon = resource_path("assets/icon.ico")
+    if icon.is_file():
+        try:
+            root.iconbitmap(str(icon))
+        except tk.TclError:
+            pass
 
     App(root)
 
