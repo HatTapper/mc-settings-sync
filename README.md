@@ -110,7 +110,7 @@ python -m mc_settings_sync
 To build the executable the same way CI does:
 
 ```bash
-pyinstaller --noconfirm --onefile --windowed --name mc-settings-sync --paths src launcher.py
+pyinstaller --noconfirm --onefile --windowed --name mc-settings-sync --icon assets/icon.ico --add-data "assets/icon.ico;assets" --paths src launcher.py
 ```
 
 `launcher.py` exists because PyInstaller runs its entry script without a parent
