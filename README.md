@@ -31,8 +31,9 @@ Documents\MCTemplates\
 
 If one cannot be found, the application offers the option to build the template root folder
 for you automatically with the "Create templates folder" button. This is the recommended option.
+You can choose to make one manually as well.
 
-If you choose to make it yourself: configure an instance the way you like it, then copy
+For bringing over your settings: configure an instance the way you like it, then copy
 the files you care about out of
 `%APPDATA%\PrismLauncher\instances\<Instance>\minecraft` into a new template
 folder under your template root folder.
@@ -41,7 +42,7 @@ folder under your template root folder.
 
 A template works best on instances close to the version it was built from.
 `options.txt` ports well, since Minecraft ignores settings it does not
-recognise and fills in defaults for any that are missing, and `servers.dat`
+recognize and fills in defaults for any that are missing, and `servers.dat`
 is version agnostic.
 
 Mod configs are the ones to watch. Files like `sodium-options.json` and
