@@ -13,6 +13,15 @@ locations in the instance you wish to leave untouched.
 Upon running the .exe, Windows will show an "unknown publisher" screen due to the application
 not possessing a signed executable. To get past it, select "More Info" -> "Run anyway"
 
+## Compatibility
+
+| Launcher | Status |
+| --- | --- |
+| Prism Launcher | Confirmed working |
+| MultiMC | Likely - same layout, untested |
+| CurseForge | Not yet supported |
+| Other | Try it, and open a [launcher support issue](../../issues/new?template=launcher_support.md) if instances don't appear |
+
 ## Setup
 
 Templates live in subfolders of `Documents\MCTemplates`, one folder per
@@ -75,6 +84,14 @@ The template name is optional and defaults to `base`. Pass `--dry-run` to list
 what would be copied without writing anything. Note that the terminal form
 applies immediately without the confirmation prompt, so use `--dry-run` first
 if you are unsure.
+
+## Roadmap
+
+Planned features are:
+- Create Template From Instance: Allow users to create a template folder from an existing launcher instance by picking
+  the files they would like to be carried over to the template
+- Version Mismatch Warning: Utilize files like Prism's `mmc-pack.json` to detect version mismatches and warn the user before applying
+- Wider Launcher Support: Extend functionality to support more launchers besides just Prism Launcher
 
 ## Development
 
