@@ -2,7 +2,7 @@
 name: Bug report
 about: For reporting any issue with the application
 title: ''
-labels: ''
+labels: launcher support
 assignees: ''
 
 ---
