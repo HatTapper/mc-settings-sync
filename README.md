@@ -20,7 +20,7 @@ not possessing a signed executable. To get past it, select "More Info" -> "Run a
 | Prism Launcher | Confirmed working |
 | MultiMC | Likely - same layout, untested |
 | CurseForge | Not yet supported |
-| Other | Try it, and open a [launcher support issue](../../issues/new?template=launcher_support.md) if instances don't appear |
+| Other | Try it, and open a [launcher support issue](../../issues/new?template=launcher-support-request.md) if instances don't appear |
 
 ## Setup
 
