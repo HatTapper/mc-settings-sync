@@ -16,7 +16,7 @@ def default_instances_root() -> Path:
 
 
 def default_templates_root() -> Path:
-    return Path.home().joinpath("Documents", "MCTemplates")
+    return Path.home().joinpath("Documents", "MCPresets")
 
 
 def config_path() -> Path:
