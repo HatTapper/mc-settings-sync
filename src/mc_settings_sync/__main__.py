@@ -19,7 +19,7 @@ def main(argv: list[str] | None = None) -> int:
 
         return gui_main()
 
-    parser = argparse.ArgumentParser(prog="mc-settings-sync")
+    parser = argparse.ArgumentParser(prog="MCSettingsSync")
     parser.add_argument("instance")
     parser.add_argument("template", nargs="?", default="base")
     parser.add_argument("--dry-run", action="store_true")

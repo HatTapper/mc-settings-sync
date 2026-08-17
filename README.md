@@ -64,7 +64,7 @@ rather than `fabric-sodium`, keeps this straight once you have a few.
 
 ## Usage
 
-Download `mc-settings-sync.exe` from
+Download `MCSettingsSync.exe` from
 [Releases](https://github.com/HatTapper/mc-settings-sync/releases) and run it.
 Create a template root folder if you do not have one already, then
 pick an instance and a template from the dropdowns. Once you're done, click **Apply
@@ -77,7 +77,7 @@ the choice is remembered in `%APPDATA%\mc-settings-sync\mc-settings-sync.json`.
 The same executable also works from a terminal:
 
 ```bash
-mc-settings-sync.exe "Fabric 1.21" fabric-sodium
+MCSettingsSync.exe "Fabric 1.21" fabric-sodium
 ```
 
 The template name is optional and defaults to `base`. Pass `--dry-run` to list
@@ -110,7 +110,7 @@ python -m mc_settings_sync
 To build the executable the same way CI does:
 
 ```bash
-pyinstaller --noconfirm --onefile --windowed --name mc-settings-sync --icon assets/icon.ico --add-data "assets/icon.ico;assets" --paths src launcher.py
+pyinstaller --noconfirm --onefile --windowed --name MCSettingsSync --icon assets/icon.ico --add-data "assets/icon.ico;assets" --paths src launcher.py
 ```
 
 `launcher.py` exists because PyInstaller runs its entry script without a parent
