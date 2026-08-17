@@ -7,13 +7,7 @@ from tkinter import filedialog, messagebox, ttk
 from tkinter.messagebox import QUESTION as ICON_QUESTION, WARNING as ICON_WARNING
 
 from . import __version__
-from .paths import (
-    Settings,
-    create_starter_template,
-    list_instances,
-    list_templates,
-    minecraft_dir,
-)
+from .paths import Settings, create_starter_template, list_instances, list_templates
 from .sync import SyncError, SyncResult, apply_template
 
 # ui padding
@@ -178,19 +172,7 @@ class App(ttk.Frame):
 
         open_folder(starter)
 
-    # jumps straight to the selected instance's game folder, that is where the
-    # files worth copying into a preset actually live
     def open_instances_root(self) -> None:
-        instance = self.instance_var.get()
-
-        if instance:
-            game_dir = minecraft_dir(self.settings.instances_root.joinpath(instance))
-
-            if game_dir is not None:
-                open_folder(game_dir)
-                self.set_status(f"Opened {game_dir}")
-                return
-
         self._open("instances_root", "instances")
 
     def open_templates_root(self) -> None:
