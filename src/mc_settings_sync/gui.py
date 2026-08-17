@@ -91,12 +91,18 @@ class App(ttk.Frame):
         ttk.Label(paths, text="Instances").grid(row=0, column=0, sticky="w")
 
         self.instances_label.grid(row=0, column=1, sticky="w", padx=PAD)
-        ttk.Button(paths, text="Change…", command=self.pick_instances_root).grid(row=0, column=2)
+        ttk.Button(paths, text="Open", command=self.open_instances_root).grid(row=0, column=2)
+        ttk.Button(paths, text="Change…", command=self.pick_instances_root).grid(
+            row=0, column=3, padx=(4, 0)
+        )
         ttk.Label(paths, text="Presets").grid(row=1, column=0, sticky="w", pady=(4, 0))
 
         self.templates_label.grid(row=1, column=1, sticky="w", padx=PAD, pady=(4, 0))
-        ttk.Button(paths, text="Change…", command=self.pick_templates_root).grid(
+        ttk.Button(paths, text="Open", command=self.open_templates_root).grid(
             row=1, column=2, pady=(4, 0)
+        )
+        ttk.Button(paths, text="Change…", command=self.pick_templates_root).grid(
+            row=1, column=3, padx=(4, 0), pady=(4, 0)
         )
 
         row += 1
@@ -165,6 +171,23 @@ class App(ttk.Frame):
         self.set_status(f"Created {starter}. Put your settings files in it, then hit Refresh.")
 
         open_folder(starter)
+
+    def open_instances_root(self) -> None:
+        self._open("instances_root", "instances")
+
+    def open_templates_root(self) -> None:
+        self._open("templates_root", "presets")
+
+    # opens a folder in explorer so users do not have to find it themselves
+    def _open(self, attr: str, label: str) -> None:
+        folder = getattr(self.settings, attr)
+
+        if not folder.is_dir():
+            self.set_status(f"That {label} folder does not exist yet: {folder}", error=True)
+            return
+
+        open_folder(folder)
+        self.set_status(f"Opened {folder}")
 
     def pick_instances_root(self) -> None:
         self._pick("instances_root", "Select the instances folder")
@@ -273,7 +296,7 @@ class App(ttk.Frame):
 def main() -> int:
     root = tk.Tk()
     root.title(f"MC Settings Sync {__version__}")
-    root.minsize(520, 300)
+    root.minsize(600, 300)
 
     # title bar icon, skipped rather than fatal if the file is missing
     icon = resource_path("assets/icon.ico")
