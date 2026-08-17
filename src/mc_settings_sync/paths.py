@@ -106,18 +106,18 @@ def create_starter_template(templates_root: Path, name: str = "base") -> Path:
 
 
 # dropped next to the templates so the folder explains itself when opened
-STARTER_README = """Each folder in here is one template.
+STARTER_README = """Each folder in here is one preset.
 
-Put files in a template exactly where they sit inside an instance's
+Put files in a preset exactly where they sit inside an instance's
 'minecraft' folder, for example:
 
     base\\options.txt
     base\\servers.dat
     base\\config\\sodium-options.json
 
-Applying a template copies those files into the instance, overwriting any
-file of the same name. Anything not in the template is left alone.
+Applying a preset copies those files into the instance, overwriting any
+file of the same name. Anything not in the preset is left alone.
 
-Do not put 'saves' or 'mods' in a template unless you mean it. Applying it
+Do not put 'saves' or 'mods' in a preset unless you mean it. Applying it
 would overwrite worlds or mod files in the target instance.
 """

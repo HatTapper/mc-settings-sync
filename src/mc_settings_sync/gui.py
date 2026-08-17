@@ -58,6 +58,14 @@ class App(ttk.Frame):
     def _build(self) -> None:
         row = 0
 
+        # says what the app does, a first time user sees two dropdowns otherwise
+        ttk.Label(
+            self,
+            text="Copy your saved settings into a Minecraft instance.",
+            wraplength=460,
+        ).grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, PAD))
+
+        row += 1
         ttk.Label(self, text="Instance").grid(row=row, column=0, sticky="w", pady=(0, PAD))
         self.instance_box = ttk.Combobox(
             self, textvariable=self.instance_var, state="readonly"
@@ -65,7 +73,7 @@ class App(ttk.Frame):
         self.instance_box.grid(row=row, column=1, sticky="ew", padx=(PAD, 0), pady=(0, PAD))
 
         row += 1
-        ttk.Label(self, text="Template").grid(row=row, column=0, sticky="w", pady=(0, PAD))
+        ttk.Label(self, text="Preset").grid(row=row, column=0, sticky="w", pady=(0, PAD))
         self.template_box = ttk.Combobox(
             self, textvariable=self.template_var, state="readonly"
         )
@@ -83,7 +91,7 @@ class App(ttk.Frame):
 
         self.instances_label.grid(row=0, column=1, sticky="w", padx=PAD)
         ttk.Button(paths, text="Change…", command=self.pick_instances_root).grid(row=0, column=2)
-        ttk.Label(paths, text="Templates").grid(row=1, column=0, sticky="w", pady=(4, 0))
+        ttk.Label(paths, text="Presets").grid(row=1, column=0, sticky="w", pady=(4, 0))
 
         self.templates_label.grid(row=1, column=1, sticky="w", padx=PAD, pady=(4, 0))
         ttk.Button(paths, text="Change…", command=self.pick_templates_root).grid(
@@ -98,7 +106,7 @@ class App(ttk.Frame):
 
         # only packed when there is nothing to apply yet, see refresh()
         self.create_button = ttk.Button(
-            buttons, text="Create templates folder", command=self.create_templates_folder
+            buttons, text="Create presets folder", command=self.create_templates_folder
         )
 
         row += 1
@@ -125,18 +133,18 @@ class App(ttk.Frame):
             self.set_status(f"No instances found in {self.settings.instances_root}", error=True)
         elif not self.settings.templates_root.is_dir():
             self.set_status(
-                f"No templates yet. Use 'Create templates folder' to set up "
+                f"No presets yet. Use 'Create presets folder' to set up "
                 f"{self.settings.templates_root}.",
                 error=True,
             )
         elif not templates:
             self.set_status(
-                f"No templates yet. Create a new folder inside "
+                f"No presets yet. Create a new folder inside "
                 f"{self.settings.templates_root} and put your settings files inside it.",
                 error=True,
             )
         else:
-            self.set_status(f"{len(instances)} instance(s), {len(templates)} template(s).")
+            self.set_status(f"{len(instances)} instance(s), {len(templates)} preset(s).")
 
     @staticmethod
     def _fill(box: ttk.Combobox, var: tk.StringVar, values: list[str]) -> None:
@@ -158,10 +166,10 @@ class App(ttk.Frame):
         open_folder(starter)
 
     def pick_instances_root(self) -> None:
-        self._pick("instances_root", "Select the Prism instances folder")
+        self._pick("instances_root", "Select the instances folder")
 
     def pick_templates_root(self) -> None:
-        self._pick("templates_root", "Select the templates folder")
+        self._pick("templates_root", "Select the presets folder")
 
     def _pick(self, attr: str, title: str) -> None:
         chosen = filedialog.askdirectory(title=title, initialdir=str(getattr(self.settings, attr)))
@@ -175,7 +183,7 @@ class App(ttk.Frame):
         template = self.template_var.get()
 
         if not instance or not template:
-            self.set_status("Pick both an instance and a template first.", error=True)
+            self.set_status("Pick both an instance and a preset first.", error=True)
             return
 
         # dry run first so the confirmation can say exactly what is about to happen
@@ -192,7 +200,7 @@ class App(ttk.Frame):
             return
 
         if preview.count == 0:
-            self.set_status(f"Template '{template}' is empty, nothing copied.", error=True)
+            self.set_status(f"Preset '{template}' is empty, nothing copied.", error=True)
             return
 
         if not self._confirm(instance, template, preview):
@@ -211,7 +219,7 @@ class App(ttk.Frame):
             return
 
         if result.count == 0:
-            self.set_status(f"Template '{template}' is empty, nothing copied.", error=True)
+            self.set_status(f"Preset '{template}' is empty, nothing copied.", error=True)
         else:
             self.set_status(
                 f"Copied {result.count} file(s) from '{template}' into '{instance}'."
@@ -223,7 +231,7 @@ class App(ttk.Frame):
         risky = sorted({name.split("/")[0] for name in preview.copied} & RISKY_DIRS)
 
         lines = [
-            f"Apply template '{template}' to instance '{instance}'?",
+            f"Apply preset '{template}' to instance '{instance}'?",
             "",
             f"{preview.count} file(s) will be written to:",
             str(preview.destination),
