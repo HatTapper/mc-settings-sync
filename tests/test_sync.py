@@ -141,6 +141,15 @@ def test_normal_names_still_resolve(tmp_path):
     assert result.copied == ["options.txt"]
 
 
+def test_documents_dir_is_a_real_directory():
+    from mc_settings_sync.paths import default_templates_root, documents_dir
+
+    # on windows this must be the shell's Documents, which onedrive may relocate
+    assert documents_dir().is_dir()
+    assert default_templates_root().name == "MCPresets"
+    assert default_templates_root().parent == documents_dir()
+
+
 def test_create_starter_template_builds_missing_tree(tmp_path):
     root = tmp_path / "Documents" / "MCTemplates"
 

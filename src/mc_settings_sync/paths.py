@@ -2,6 +2,7 @@
 
 import json
 import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -15,8 +16,39 @@ def default_instances_root() -> Path:
     return Path.home().joinpath(".local", "share", "PrismLauncher", "instances")
 
 
+# asks windows where Documents actually is, onedrive moves it out of the profile
+# folder and Path.home()/Documents then points at a folder explorer does not show
+def documents_dir() -> Path:
+    fallback = Path.home().joinpath("Documents")
+
+    if sys.platform != "win32":
+        return fallback
+
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        folderid_documents = ctypes.create_string_buffer(
+            b"\xd0\x9a\xd3\xfd\x8f\x23\xaf\x46\xad\xb4\x6c\x85\x48\x03\x69\xc7"
+        )
+        out = ctypes.c_wchar_p()
+        result = ctypes.windll.shell32.SHGetKnownFolderPath(
+            ctypes.byref(folderid_documents), 0, None, ctypes.byref(out)
+        )
+
+        if result != 0 or not out.value:
+            return fallback
+
+        path = Path(out.value)
+        ctypes.windll.ole32.CoTaskMemFree(out)
+
+        return path
+    except (OSError, AttributeError, ValueError):
+        return fallback
+
+
 def default_templates_root() -> Path:
-    return Path.home().joinpath("Documents", "MCPresets")
+    return documents_dir().joinpath("MCPresets")
 
 
 def config_path() -> Path:
