@@ -6,6 +6,7 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 from tkinter.messagebox import QUESTION as ICON_QUESTION, WARNING as ICON_WARNING
 
+from . import __version__
 from .paths import Settings, create_starter_template, list_instances, list_templates
 from .sync import SyncError, SyncResult, apply_template
 
@@ -271,7 +272,7 @@ class App(ttk.Frame):
 
 def main() -> int:
     root = tk.Tk()
-    root.title("MC Settings Sync")
+    root.title(f"MC Settings Sync {__version__}")
     root.minsize(520, 300)
 
     # title bar icon, skipped rather than fatal if the file is missing

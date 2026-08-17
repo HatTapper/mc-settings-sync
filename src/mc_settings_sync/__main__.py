@@ -7,6 +7,7 @@ With arguments it behaves like the original .bat script:
 import argparse
 import sys
 
+from . import __version__
 from .paths import Settings
 from .sync import SyncError, apply_template
 
@@ -20,6 +21,7 @@ def main(argv: list[str] | None = None) -> int:
         return gui_main()
 
     parser = argparse.ArgumentParser(prog="MCSettingsSync")
+    parser.add_argument("--version", action="version", version=f"MCSettingsSync {__version__}")
     parser.add_argument("instance")
     parser.add_argument("template", nargs="?", default="base")
     parser.add_argument("--dry-run", action="store_true")
