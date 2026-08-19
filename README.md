@@ -2,24 +2,29 @@
 
 Copies pre-configured Minecraft settings — `options.txt`, `servers.dat`,
 `config/sodium-options.json`, `config/iris.properties`, and anything else you
-drop in a preset folder — into a launcher instance, so a fresh (or
+drop in a preset folder, into a launcher instance, so a fresh (or
 modded) instance doesn't have to be reconfigured by hand.
 
 Only files that exist in the preset are written into the target instance.
-In order to avoid unintended overwrites, it is suggested that you refrain from
-including directories such as `saves/`, `mods/`, `resourcepacks/`, and any other
-locations in the instance you wish to leave untouched.
+Other files are ignored and left unchanged. In order to avoid unintended 
+overwrites, it is suggested that you refrain from including directories 
+such as `saves/`, `mods/`, `resourcepacks/`, and any other locations in 
+the instance you wish to leave untouched.
 
 Upon running the .exe, Windows will show an "unknown publisher" screen due to the application
 not possessing a signed executable. To get past it, select "More Info" -> "Run anyway"
 
 ## Compatibility
 
+This application was built and tested on Windows 11. Other operating systems have not been
+tested and are not guaranteed to work. Feel free to build from source if you're comfortable
+and let me know how it goes. (instructions can be found [here](https://github.com/HatTapper/mc-settings-sync#development))
+
 | Launcher | Status |
 | --- | --- |
 | Prism Launcher | Confirmed working |
 | MultiMC | Likely - same layout, untested |
-| CurseForge | Not yet supported |
+| CurseForge | [Not yet supported](https://github.com/HatTapper/mc-settings-sync/issues/7) |
 | Other | Try it, and open a [launcher support issue](../../issues/new?template=launcher-support-request.md) if instances don't appear |
 
 ## Setup
@@ -40,12 +45,16 @@ Documents\MCPresets\
 
 If one cannot be found, the application offers the option to build the preset root folder
 for you automatically with the "Create presets folder" button. This is the recommended option.
-You can choose to make one manually as well.
+You can choose to make one manually as well. If your Documents folder lives within OneDrive,
+presets will be created in there too.
 
 For bringing over your settings: configure an instance the way you like it, then copy
 the files you care about out of
 `%APPDATA%\PrismLauncher\instances\<Instance>\minecraft` into a new preset
-folder under your preset root folder.
+folder under your preset root folder. Common files would be `options.txt`, `servers.dat`,
+and other configuration files. It is important that your hierarchy within the preset mimics
+that of the minecraft folder. If your `sodium-options.json` lives within the `config` folder,
+your preset must also contain a `config` folder in which the json file lives.
 
 ### Minecraft and mod versions
 
@@ -92,6 +101,10 @@ Planned features are:
   the files they would like to be carried over to the preset
 - [Version Mismatch Warning](https://github.com/HatTapper/mc-settings-sync/issues/2): Utilize files like Prism's `mmc-pack.json` to detect version mismatches and warn the user before applying
 - [Wider Launcher Support](https://github.com/HatTapper/mc-settings-sync/issues/3): Extend functionality to support more launchers besides just Prism Launcher
+
+Other planned features that are currently unscheduled:
+- [Linux Support](https://github.com/HatTapper/mc-settings-sync/issues/6): Self-explanatory, provide clear Linux support and a functional binary
+- [In-App Preset Editing](https://github.com/HatTapper/mc-settings-sync/issues/5): Allow users to edit settings in their presets from within the app
 
 ## Development
 
