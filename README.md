@@ -123,3 +123,5 @@ also attaches the executable to a GitHub Release.
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+*Built with AI assistance (Claude), with all design decisions, testing, and review done by me.*
